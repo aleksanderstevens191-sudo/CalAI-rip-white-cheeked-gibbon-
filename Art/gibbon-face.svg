@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Original "White Cheeked Gibbon" mascot: black fur, white cheek tufts, crown crest. -->
+  <defs>
+    <radialGradient id="fur" cx="45%" cy="35%" r="70%">
+      <stop offset="0%" stop-color="#3a3a3f"/>
+      <stop offset="100%" stop-color="#141416"/>
+    </radialGradient>
+    <radialGradient id="skin" cx="50%" cy="40%" r="65%">
+      <stop offset="0%" stop-color="#6e5d55"/>
+      <stop offset="100%" stop-color="#43372f"/>
+    </radialGradient>
+  </defs>
+  <!-- crest -->
+  <path d="M206 150 C204 118 214 94 232 74 C230 100 238 116 250 126 C250 96 258 70 278 52 C272 84 278 106 292 122 C298 104 310 94 326 88 C316 110 312 130 310 154 Z" fill="#17171a"/>
+  <!-- head -->
+  <ellipse cx="256" cy="282" rx="182" ry="172" fill="url(#fur)"/>
+  <!-- white cheek tufts (left) -->
+  <g fill="#ffffff">
+    <circle cx="142" cy="232" r="24"/>
+    <circle cx="124" cy="270" r="30"/>
+    <circle cx="120" cy="312" r="32"/>
+    <circle cx="132" cy="352" r="31"/>
+    <circle cx="156" cy="386" r="28"/>
+    <circle cx="188" cy="408" r="24"/>
+    <circle cx="160" cy="300" r="40"/>
+    <circle cx="176" cy="360" r="34"/>
+    <!-- right (mirrored) -->
+    <circle cx="370" cy="232" r="24"/>
+    <circle cx="388" cy="270" r="30"/>
+    <circle cx="392" cy="312" r="32"/>
+    <circle cx="380" cy="352" r="31"/>
+    <circle cx="356" cy="386" r="28"/>
+    <circle cx="324" cy="408" r="24"/>
+    <circle cx="352" cy="300" r="40"/>
+    <circle cx="336" cy="360" r="34"/>
+  </g>
+  <!-- face mask -->
+  <path d="M256 226 C232 196 168 192 146 244 C132 282 150 318 176 334 C178 378 214 410 256 410 C298 410 334 378 336 334 C362 318 380 282 366 244 C344 192 280 196 256 226 Z" fill="url(#skin)"/>
+  <!-- brow -->
+  <path d="M150 228 Q204 186 252 222 Q256 226 260 222 Q308 186 362 228" fill="none" stroke="#1d1a19" stroke-width="12" stroke-linecap="round"/>
+  <!-- eyes -->
+  <g>
+    <circle cx="206" cy="268" r="36" fill="#ffffff"/>
+    <circle cx="306" cy="268" r="36" fill="#ffffff"/>
+    <circle cx="212" cy="272" r="25" fill="#5b3a21"/>
+    <circle cx="300" cy="272" r="25" fill="#5b3a21"/>
+    <circle cx="213" cy="273" r="15" fill="#0d0d0e"/>
+    <circle cx="299" cy="273" r="15" fill="#0d0d0e"/>
+    <circle cx="221" cy="264" r="7" fill="#ffffff"/>
+    <circle cx="307" cy="264" r="7" fill="#ffffff"/>
+  </g>
+  <!-- muzzle -->
+  <ellipse cx="256" cy="352" rx="56" ry="40" fill="#7d6a60"/>
+  <!-- nostrils -->
+  <ellipse cx="244" cy="334" rx="6" ry="4.5" fill="#2a2220"/>
+  <ellipse cx="268" cy="334" rx="6" ry="4.5" fill="#2a2220"/>
+  <!-- smile -->
+  <path d="M224 362 Q256 392 288 362" fill="none" stroke="#2a2220" stroke-width="7" stroke-linecap="round"/>
+  <!-- blush -->
+  <ellipse cx="184" cy="322" rx="17" ry="10" fill="#f4a9a8" opacity="0.6"/>
+  <ellipse cx="328" cy="322" rx="17" ry="10" fill="#f4a9a8" opacity="0.6"/>
+</svg>

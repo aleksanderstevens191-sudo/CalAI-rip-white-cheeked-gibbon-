@@ -1,0 +1,77 @@
+name: Build and screenshot
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-26
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Show toolchain
+        run: |
+          xcodebuild -version
+          xcrun simctl list devices available | grep -i iphone || true
+
+      - name: Install xcodegen
+        run: brew install xcodegen
+
+      - name: Generate project
+        run: xcodegen generate
+
+      - name: Pick an iPhone simulator
+        run: |
+          # Prefer iPhone 17; otherwise use the first available iPhone.
+          UDID=$(xcrun simctl list devices available -j | python3 -c "
+          import json,sys
+          d=json.load(sys.stdin)['devices']
+          phones=[x for v in d.values() for x in v if x['name'].startswith('iPhone')]
+          pick=[x for x in phones if x['name']=='iPhone 17'] or phones
+          print(pick[0]['udid'])")
+          echo "SIM_UDID=$UDID" >> "$GITHUB_ENV"
+
+      - name: Build for simulator (ad hoc signed)
+        run: |
+          set -o pipefail
+          xcodebuild -project Gibbon.xcodeproj -scheme Gibbon -sdk iphonesimulator \
+            -destination "id=$SIM_UDID" -derivedDataPath build \
+            CODE_SIGN_IDENTITY="-" CODE_SIGNING_REQUIRED=YES build 2>&1 | tee build.log | tail -40
+
+      - name: Boot, install, launch, screenshot
+        run: |
+          mkdir -p shots
+          xcrun simctl boot "$SIM_UDID"
+          xcrun simctl bootstatus "$SIM_UDID" -b
+          APP=$(find build/Build/Products -name Gibbon.app -maxdepth 3 | head -1)
+          xcrun simctl install "$SIM_UDID" "$APP"
+          xcrun simctl launch "$SIM_UDID" com.alek.gibbon
+          sleep 8
+          xcrun simctl io "$SIM_UDID" screenshot shots/01-launch.png
+          sleep 5
+          xcrun simctl io "$SIM_UDID" screenshot shots/02-after-5s.png
+
+      - name: Build unsigned .ipa for Sideloadly/AltStore
+        run: |
+          set -o pipefail
+          xcodebuild -project Gibbon.xcodeproj -scheme Gibbon -sdk iphoneos \
+            -configuration Release -derivedDataPath build-device \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" build 2>&1 | tee build-device.log | tail -20
+          mkdir -p ipa/Payload
+          cp -R build-device/Build/Products/Release-iphoneos/Gibbon.app ipa/Payload/
+          (cd ipa && zip -qry ../Gibbon-unsigned.ipa Payload)
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: screenshots-and-logs
+          path: |
+            shots
+            build.log
+            build-device.log
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Gibbon-unsigned-ipa
+          path: Gibbon-unsigned.ipa

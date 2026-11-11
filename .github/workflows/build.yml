@@ -4,6 +4,9 @@ on:
   push:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: macos-26
@@ -52,6 +55,20 @@ jobs:
           xcrun simctl io "$SIM_UDID" screenshot shots/01-launch.png
           sleep 5
           xcrun simctl io "$SIM_UDID" screenshot shots/02-after-5s.png
+
+      - name: Publish screenshots to ci-screenshots branch
+        if: always()
+        run: |
+          [ -d shots ] || exit 0
+          cp -R shots "$RUNNER_TEMP/shots"
+          git config user.name "github-actions"
+          git config user.email "actions@users.noreply.github.com"
+          git checkout --orphan ci-screenshots
+          git rm -rf . >/dev/null 2>&1 || true
+          cp "$RUNNER_TEMP"/shots/*.png .
+          git add *.png
+          git commit -qm "Screenshots from run ${{ github.run_id }} (${{ github.sha }})"
+          git push -f origin ci-screenshots
 
       - name: Build unsigned .ipa for Sideloadly/AltStore
         run: |
